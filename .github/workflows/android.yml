@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       # 3. Hapus folder android lama (jika ada) dan buat baru yang bersih agar tidak bentrok
       - name: Generate Fresh Capacitor Android Platform
