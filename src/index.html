@@ -10,24 +10,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
 <style>
-:root{--bg:#F4F6FC;--surface:#fff;--ink:#141A3A;--mute:#6A7295;--line:#E4E8F5;--brand:#3D5AFE;--brand-d:#2C44D6;--onb:#fff;--soft:#EBEFFF;--amber:#FFB020;--good:#0E9F6E;--danger:#E5484D;--b1:#DCE3FF;--b2:#D3F3F7;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1126;--surface:#171C3A;--ink:#EEF0FF;--mute:#9AA2CC;--line:#2A3060;--brand:#7C8CFF;--brand-d:#9AA7FF;--onb:#0D1126;--soft:#232958;--amber:#FFC24D;--good:#3DD6A0;--danger:#FF7A80;--b1:#1E2656;--b2:#103447;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0D1126;--surface:#171C3A;--ink:#EEF0FF;--mute:#9AA2CC;--line:#2A3060;--brand:#7C8CFF;--brand-d:#9AA7FF;--onb:#0D1126;--soft:#232958;--amber:#FFC24D;--good:#3DD6A0;--danger:#FF7A80;--b1:#1E2656;--b2:#103447;color-scheme:dark}
+:root{--bg:#F3F6F4;--surface:#fff;--ink:#0F1E19;--mute:#64736C;--line:#E2E9E5;--brand:#0FA574;--brand-d:#08795A;--onb:#fff;--soft:#E5F6EE;--amber:#FFB43B;--good:#08795A;--danger:#E5484D;--dk:#0F1E19;--ondk:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1512;--surface:#141F1B;--ink:#E9F4EF;--mute:#93A69D;--line:#24342E;--brand:#2FD39B;--brand-d:#6BE5BC;--onb:#06130E;--soft:#1B2D26;--amber:#FFC66B;--good:#4BE0AC;--danger:#FF7A80;--dk:#E9F4EF;--ondk:#0C1512;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C1512;--surface:#141F1B;--ink:#E9F4EF;--mute:#93A69D;--line:#24342E;--brand:#2FD39B;--brand-d:#6BE5BC;--onb:#06130E;--soft:#1B2D26;--amber:#FFC66B;--good:#4BE0AC;--danger:#FF7A80;--dk:#E9F4EF;--ondk:#0C1512;color-scheme:dark}
 html,body,#root{height:100%}
-body{margin:0;color:var(--ink);font-family:Inter,system-ui,sans-serif;background:radial-gradient(900px 440px at 90% -8%,var(--b1),transparent 62%),radial-gradient(700px 420px at -8% 108%,var(--b2),transparent 60%),var(--bg);background-attachment:fixed}
-h1,h2,.hd{font-family:Sora,Inter,sans-serif}
+body{margin:0;color:var(--ink);font-family:Inter,system-ui,sans-serif;background:radial-gradient(640px 280px at 50% -90px,var(--soft),transparent 72%),var(--bg);background-attachment:fixed;-webkit-tap-highlight-color:transparent}
+h1,h2,.hd{font-family:Sora,Inter,sans-serif;letter-spacing:-.015em}
 button{font-family:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-.card{background:var(--surface);border-radius:24px;box-shadow:0 0 0 1px var(--line),0 14px 30px -20px rgba(20,26,90,.28)}
-.btn{background:var(--brand);color:var(--onb);border-radius:16px;font-weight:700;padding:.85rem 1.1rem;border:0}
-.btn:active{transform:scale(.98)}
-.btn2{background:var(--soft);color:var(--brand-d);border-radius:14px;font-weight:600;padding:.55rem .9rem;border:0}
-.chip{border:0;border-radius:999px;padding:.5rem 1rem;font-size:.85rem;font-weight:600;background:var(--surface);color:var(--mute);white-space:nowrap;box-shadow:0 0 0 1px var(--line)}
-.chip.on{background:var(--brand);color:var(--onb);box-shadow:none}
-.inp{width:100%;border-radius:16px;padding:.75rem .95rem;font-size:.9rem;background:var(--surface);border:0;box-shadow:0 0 0 1px var(--line);color:var(--ink)}
+.card{background:var(--surface);border-radius:20px;box-shadow:0 0 0 1px var(--line),0 1px 2px rgba(15,30,25,.04),0 14px 26px -18px rgba(15,30,25,.16)}
+.btn{background:var(--brand);color:var(--onb);border-radius:14px;font-weight:700;padding:.85rem 1.1rem;border:0;box-shadow:0 8px 16px -8px var(--brand);transition:transform .12s,filter .12s}
+.btn:active{transform:scale(.98);filter:brightness(.95)}
+.btn2{background:var(--soft);color:var(--brand-d);border-radius:12px;font-weight:600;padding:.55rem .9rem;border:0}
+.btn2:active{filter:brightness(.96)}
+.chip{border:0;border-radius:999px;padding:.5rem 1rem;font-size:.85rem;font-weight:600;background:var(--surface);color:var(--mute);white-space:nowrap;box-shadow:0 0 0 1px var(--line);transition:background .15s,color .15s}
+.chip.on{background:var(--dk);color:var(--ondk);box-shadow:none}
+.inp{width:100%;border-radius:14px;padding:.75rem .95rem;font-size:.9rem;background:var(--surface);border:0;box-shadow:0 0 0 1px var(--line);color:var(--ink);transition:box-shadow .15s}
+.inp:focus{outline:0;box-shadow:0 0 0 2px var(--brand)}
+.inp::placeholder{color:var(--mute);opacity:.75}
 .nums{font-variant-numeric:tabular-nums}
-.scroll{overflow:auto;-webkit-overflow-scrolling:touch}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:14px}
+.scroll{overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @keyframes shine{to{background-position:-300% 0}}
@@ -35,8 +39,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 @keyframes cr-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .cr{animation:cr-in .8s ease-out both}
 .cr-sub{font-size:10px;letter-spacing:.2em;color:var(--mute)}
-.cr-name{background:linear-gradient(90deg,#4F6BFF,#12B5E5,#00C28A,#4F6BFF);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
-.cr-line{height:2px;width:36px;margin:7px auto;border-radius:2px;background:linear-gradient(90deg,transparent,#4F6BFF,transparent);animation:cr-pulse 2.6s ease-in-out infinite}
+.cr-name{background:linear-gradient(90deg,#08795A,#0FA574,#2BCB95,#08795A);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+.cr-line{height:2px;width:36px;margin:7px auto;border-radius:2px;background:linear-gradient(90deg,transparent,#0FA574,transparent);animation:cr-pulse 2.6s ease-in-out infinite}
 .cr-copy{font-size:10px;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.cr,.cr-name,.cr-line{animation:none}}
 @keyframes ld{from{width:0}to{width:100%}}
@@ -90,14 +94,14 @@ function Kasir({products,cart,setCart,onPay,cfg}){
     <div className="flex-1 min-w-0 flex flex-col">
       <div className="px-4 lg:px-6 pt-1 pb-3 space-y-3"><input value=${q} onChange=${e=>setQ(e.target.value)} placeholder="Cari produk…" className="inp !py-3"/>
         <div className="flex gap-2 scroll pb-1">${cats.map(c=>html`<button key=${c} className=${'chip '+(cat===c?'on':'')} onClick=${()=>setCat(c)}>${c}</button>`)}</div></div>
-      <div className="flex-1 scroll px-4 lg:px-6 pb-44 lg:pb-6"><div className="pgrid">${list.map(p=>{const left=p.stock-(cart[p.id]||0);return html`<button key=${p.id} disabled=${left<=0} onClick=${()=>add(p)} className="card p-2 text-left flex flex-col relative disabled:opacity-40 active:scale-[.98] transition-transform">
-        <div className="relative"><${Pic} p=${p} cls="w-full text-5xl" st=${{aspectRatio:'1/1'}}/>
-          <span className="absolute left-2 bottom-2 rounded-full px-2.5 py-1 text-xs font-bold nums" style=${{background:'var(--surface)',color:'var(--ink)',boxShadow:'0 4px 12px -4px rgba(0,0,0,.3)'}}>${rp(p.price)}</span>
-          ${cart[p.id]&&html`<span className="absolute top-2 right-2 text-xs font-bold rounded-full min-w-[26px] h-[26px] px-1 grid place-items-center" style=${{background:'var(--amber)',color:'#222'}}>${cart[p.id]}</span>`}</div>
-        <div className="flex items-center justify-between gap-2 px-1.5 pt-2.5 pb-1"><div className="min-w-0"><div className="font-semibold text-sm truncate">${p.name}</div><div className="text-[11px]" style=${{color:left<=5?'var(--danger)':'var(--mute)'}}>${left<=0?'Habis':'Stok '+left}</div></div><span className="w-8 h-8 shrink-0 rounded-full grid place-items-center font-bold" style=${{background:'var(--brand)',color:'var(--onb)'}}>+</span></div></button>`})}</div>
+      <div className="flex-1 scroll px-4 lg:px-6 pb-44 lg:pb-6"><div className="pgrid">${list.map(p=>{const left=p.stock-(cart[p.id]||0);return html`<button key=${p.id} disabled=${left<=0} onClick=${()=>add(p)} className="card p-2.5 text-left flex flex-col relative disabled:opacity-45 active:scale-[.97] transition-transform">
+        <div className="relative"><${Pic} p=${p} cls="w-full text-[52px]" st=${{aspectRatio:'4/3',borderRadius:'14px'}}/>
+          <span className="absolute left-1.5 top-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style=${{background:'var(--surface)',color:left<=5?'var(--danger)':'var(--mute)'}}>${left<=0?'Habis':'Stok '+left}</span>
+          ${cart[p.id]&&html`<span className="absolute top-1.5 right-1.5 text-xs font-bold rounded-full min-w-[24px] h-[24px] px-1.5 grid place-items-center nums" style=${{background:'var(--dk)',color:'var(--ondk)'}}>${cart[p.id]}</span>`}</div>
+        <div className="pt-2.5 px-0.5 flex items-end justify-between gap-2"><div className="min-w-0"><div className="font-semibold text-[13px] leading-tight clamp2">${p.name}</div><div className="hd font-bold text-[15px] mt-1 nums" style=${{color:'var(--brand-d)'}}>${rp(p.price)}</div></div><span className="w-8 h-8 shrink-0 rounded-xl grid place-items-center text-lg font-semibold" style=${{background:'var(--brand)',color:'var(--onb)'}}>+</span></div></button>`})}</div>
         ${list.length===0&&html`<p className="text-center py-10 text-sm" style=${{color:'var(--mute)'}}>Produk tidak ditemukan. Coba kata kunci lain.</p>`}</div></div>
     <aside className="hidden lg:block w-[360px] shrink-0 card mr-4 mb-4 overflow-hidden">${Panel}</aside>
-    ${count>0&&html`<button onClick=${()=>setOpen(true)} className="lg:hidden fixed left-4 right-4 btn !rounded-2xl flex justify-between items-center shadow-lg z-20" style=${{bottom:'calc(78px + env(safe-area-inset-bottom,0px))'}}><span>${count} item</span><span className="nums">Lihat pesanan · ${rp(tot)}</span></button>`}
+    ${count>0&&html`<button onClick=${()=>setOpen(true)} className="lg:hidden fixed left-3 right-3 flex justify-between items-center z-20 border-0" style=${{bottom:'calc(88px + env(safe-area-inset-bottom,0px))',background:'var(--dk)',color:'var(--ondk)',borderRadius:'20px',padding:'.65rem .7rem .65rem 1rem',boxShadow:'0 16px 28px -12px rgba(15,30,25,.55)'}}><span className="flex items-center gap-2.5"><span className="grid place-items-center min-w-[28px] h-7 px-1.5 rounded-lg text-sm font-bold nums" style=${{background:'var(--brand)',color:'var(--onb)'}}>${count}</span><span className="text-sm font-semibold">Pesanan</span></span><span className="flex items-center gap-3"><b className="hd nums text-[15px]">${rp(tot)}</b><span className="text-xs font-bold rounded-xl px-3.5 py-2" style=${{background:'var(--brand)',color:'var(--onb)'}}>Lihat</span></span></button>`}
     ${open&&html`<div className="lg:hidden fixed inset-0 z-40 flex items-end" style=${{background:'rgba(0,0,0,.45)'}} onClick=${()=>setOpen(false)}><div className="card w-full h-[78%] !rounded-b-none" onClick=${e=>e.stopPropagation()}>${Panel}</div></div>`}</div>`;
 }
 
@@ -116,20 +120,23 @@ function Lap({tx,exp,setExp}){
   return html`<div className="px-4 lg:px-6 pt-2 space-y-4 scroll h-full pb-44 lg:pb-6">
     
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <div className="col-span-2 rounded-[28px] p-5 text-white relative overflow-hidden" style=${{background:'linear-gradient(135deg,#141C5E 0%,#3D5AFE 65%,#12B5E5 100%)'}}><div className="text-xs opacity-80">Laba bersih hari ini</div><div className="hd font-extrabold text-3xl mt-1 nums">${rp(net)}</div><div className="inline-block mt-3 text-xs rounded-full px-2.5 py-1" style=${{background:'rgba(255,255,255,.18)'}}>Margin ${(lo?Math.round(lp/lo*100):0)}%</div>
+      <div className="col-span-2 rounded-[28px] p-5 text-white relative overflow-hidden" style=${{background:'linear-gradient(135deg,#08795A 0%,#0FA574 58%,#34D3A0 100%)'}}><div className="text-xs opacity-80">Laba bersih hari ini</div><div className="hd font-extrabold text-3xl mt-1 nums">${rp(net)}</div><div className="inline-block mt-3 text-xs rounded-full px-2.5 py-1" style=${{background:'rgba(255,255,255,.18)'}}>Margin ${(lo?Math.round(lp/lo*100):0)}%</div>
         <svg viewBox="0 0 120 36" className="absolute right-4 bottom-4 w-28 opacity-90" aria-hidden="true"><polyline fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points=${data.map((r,k)=>(k*120/(data.length-1))+','+(33-r[2]/pmax*29)).join(' ')}/></svg></div>
       <${Stat} l="Omzet hari ini" v=${rp(lo)} s="Penjualan kotor"/><${Stat} l="Laba kotor" v=${rp(lp)} c="var(--good)" s="Sebelum pengeluaran"/></div>
     <div className="grid lg:grid-cols-3 gap-4">
       <div className="card p-4 lg:col-span-2 min-w-0">
-        <div className="flex flex-wrap justify-between gap-2 mb-2"><div><div className="font-bold">Omzet dan laba 7 hari</div><div className="text-xs" style=${{color:'var(--mute)'}}>Ketuk batang untuk melihat detail</div></div>
-          <div className="text-right text-sm"><div className="text-xs" style=${{color:'var(--mute)'}}>${d[0]}</div><div className="nums font-bold">Omzet ${rp(d[1])}</div><div className="nums font-bold" style=${{color:'var(--good)'}}>Laba ${rp(d[2])} (${(d[1]?Math.round(d[2]/d[1]*100):0)}%)</div></div></div>
+        <div className="mb-3"><div className="font-bold">Omzet dan laba 7 hari</div><div className="text-xs" style=${{color:'var(--mute)'}}>Ketuk batang untuk melihat detail</div></div>
+        <div className="grid grid-cols-3 gap-2 rounded-2xl p-3 mb-3" style=${{background:'var(--soft)'}}>
+          <div className="min-w-0"><div className="text-[11px]" style=${{color:'var(--mute)'}}>Dipilih</div><div className="font-bold text-sm truncate">${d[0]}</div></div>
+          <div className="min-w-0"><div className="text-[11px]" style=${{color:'var(--mute)'}}>Omzet</div><div className="nums font-bold text-sm truncate">${rp(d[1])}</div></div>
+          <div className="min-w-0"><div className="text-[11px]" style=${{color:'var(--mute)'}}>Laba (${d[1]?Math.round(d[2]/d[1]*100):0}%)</div><div className="nums font-bold text-sm truncate" style=${{color:'var(--good)'}}>${rp(d[2])}</div></div></div>
         <svg viewBox=${'0 0 '+W+' '+(H+26)} className="w-full" role="img" aria-label="Grafik omzet dan laba harian">
           ${[0,.5,1].map(x=>html`<line key=${x} x1="0" x2=${W} y1=${H-x*H*.9} y2=${H-x*H*.9} stroke="var(--line)"/>`)}
           ${data.map((r,i)=>{const x=gap+i*(bw+gap),h1=r[1]/max*H*.9,h2=r[2]/max*H*.9;return html`<g key=${i} onClick=${()=>setSel(i)} tabIndex="0" onKeyDown=${e=>e.key==='Enter'&&setSel(i)} style=${{cursor:'pointer'}}>
             <rect x=${x-5} y="0" width=${bw+10} height=${H+26} fill="transparent"/>
-            <rect x=${x} y=${H-h1} width=${bw} height=${h1} rx="7" fill=${i===sel?'var(--brand)':'var(--soft)'} opacity=${i===sel?.35:1}/>
-            <rect x=${x+8} y=${H-h2} width=${bw-16} height=${h2} rx="5" fill=${i===sel?'var(--good)':'var(--brand)'}/>
-            <text x=${x+bw/2} y=${H+18} textAnchor="middle" fontSize="11" fill="var(--mute)">${r[0]}</text></g>`})}
+            <rect x=${x} y=${H-h1} width=${bw} height=${h1} rx="7" fill=${i===sel?'var(--brand)':'var(--soft)'} opacity=${i===sel?.3:1}/>
+            <rect x=${x+8} y=${H-h2} width=${bw-16} height=${h2} rx="5" fill=${i===sel?'var(--brand-d)':'var(--brand)'}/>
+            <text x=${x+bw/2} y=${H+21} textAnchor="middle" fontSize="16" fill="var(--mute)">${r[0]}</text></g>`})}
         </svg>
         <div className="flex gap-4 text-xs mt-1" style=${{color:'var(--mute)'}}><span><b style=${{color:'var(--brand)'}}>■</b> Laba</span><span><b style=${{color:'var(--soft)'}}>■</b> Omzet</span></div></div>
       <div className="card p-4"><div className="font-bold mb-3">Penyumbang laba terbesar</div>${top.length===0?html`<p className="text-sm" style=${{color:'var(--mute)'}}>Belum ada penjualan.</p>`:top.map(([n,v,l],i)=>html`<div key=${n} className="mb-3"><div className="flex justify-between text-sm gap-2"><span className="truncate">${n}</span><span className="nums font-semibold shrink-0" style=${{color:'var(--good)'}}>${rp(l)}</span></div><div className="h-2 rounded-full mt-1" style=${{background:'var(--soft)'}}><div className="h-2 rounded-full" style=${{width:(top[0][2]>0?Math.max(0,l/top[0][2]*100):0)+'%',background:i===0?'var(--amber)':'var(--brand)'}}></div></div><div className="text-[11px] mt-0.5" style=${{color:'var(--mute)'}}>${v} terjual</div></div>`)}</div></div>
@@ -223,9 +230,9 @@ function App(){
   const TITLE={kasir:'Kasir',lap:'Laporan laba',produk:'Produk',riwayat:'Riwayat',set:'Pengaturan',about:'Tentang'};
   const hr=new Date().getHours(),greet=hr<11?'Selamat pagi':hr<15?'Selamat siang':hr<18?'Selamat sore':'Selamat malam';
   const Page=page==='kasir'?html`<${Kasir} products=${products} cart=${cart} setCart=${setCart} onPay=${setOrder} cfg=${cfg}/>`:page==='lap'?html`<${Lap} tx=${tx} exp=${exp} setExp=${setExp}/>`:page==='produk'?html`<${Produk} products=${products} setProducts=${setProducts}/>`:page==='riwayat'?html`<${Riwayat} tx=${tx} onView=${setStruk}/>`:page==='set'?html`<${Setelan} cfg=${cfg} setCfg=${setCfg} onAbout=${()=>setPage('about')} onReset=${reset}/>`:html`<${Tentang} onBack=${()=>setPage('set')}/>`;
-  const navBtn=(on)=>({background:on?'var(--brand)':'transparent',color:on?'var(--onb)':'var(--mute)'});
+  const navBtn=(on)=>({background:on?'var(--soft)':'transparent',color:on?'var(--brand-d)':'var(--mute)'});
   return html`<div className="h-full flex">
-    ${sp<2&&html`<div className="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 text-center overflow-hidden" style=${{background:'linear-gradient(160deg,#FFFFFF 0%,#EEF2FF 55%,#E3F6FB 100%)',opacity:sp?0:1,transition:'opacity .5s',pointerEvents:sp?'none':'auto','--mute':'#6A7295'}}><div className="absolute -top-24 -left-20 w-72 h-72 rounded-full" style=${{background:'#CFD8FF',filter:'blur(60px)',opacity:.7}}></div><div className="absolute -bottom-24 -right-20 w-72 h-72 rounded-full" style=${{background:'#BDEFF7',filter:'blur(60px)',opacity:.8}}></div><div className="relative hd font-extrabold" style=${{fontSize:'clamp(2rem,9vw,3.2rem)',letterSpacing:'-0.02em',background:'linear-gradient(90deg,#2C44D6,#3D5AFE 50%,#0EA5C6)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'}}>KASIR TA</div><div className="relative mt-5 h-[3px] w-16 rounded-full overflow-hidden" style=${{background:'#DCE3FF'}}><div className="h-full rounded-full" style=${{background:'linear-gradient(90deg,#3D5AFE,#0EA5C6)',animation:'ld 1.7s ease-out forwards'}}></div></div><div className="absolute inset-x-0 flex justify-center px-4" style=${{bottom:'calc(28px + env(safe-area-inset-bottom,0px))'}}><${Credit} slim=${true}/></div></div>`}
+    ${sp<2&&html`<div className="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 text-center overflow-hidden" style=${{background:'linear-gradient(160deg,#FFFFFF 0%,#F0FAF5 55%,#E2F6EC 100%)',opacity:sp?0:1,transition:'opacity .5s',pointerEvents:sp?'none':'auto','--mute':'#64736C'}}><div className="absolute -top-24 -left-20 w-72 h-72 rounded-full" style=${{background:'#BDEBD6',filter:'blur(60px)',opacity:.7}}></div><div className="absolute -bottom-24 -right-20 w-72 h-72 rounded-full" style=${{background:'#FFE3B5',filter:'blur(60px)',opacity:.8}}></div><div className="relative hd font-extrabold" style=${{fontSize:'clamp(2rem,9vw,3.2rem)',letterSpacing:'-0.02em',background:'linear-gradient(90deg,#08795A,#0FA574 50%,#2BCB95)',WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'}}>KASIR TA</div><div className="relative mt-5 h-[3px] w-16 rounded-full overflow-hidden" style=${{background:'#CDEBDD'}}><div className="h-full rounded-full" style=${{background:'linear-gradient(90deg,#0FA574,#2BCB95)',animation:'ld 1.7s ease-out forwards'}}></div></div><div className="absolute inset-x-0 flex justify-center px-4" style=${{bottom:'calc(28px + env(safe-area-inset-bottom,0px))'}}><${Credit} slim=${true}/></div></div>`}
     <aside className="hidden lg:flex w-[236px] shrink-0 flex-col card m-4 mr-0 p-4 gap-1.5">
       <div className="mb-6 px-1"><${Logo} name=${cfg.name}/></div>
       ${NAV.map(([k,l,d])=>html`<button key=${k} onClick=${()=>setPage(k)} className="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold text-left border-0" style=${navBtn(cur===k&&page!=='about')}><${Ico} d=${d}/>${l}</button>`)}
@@ -234,7 +241,7 @@ function App(){
     <div className="flex-1 min-w-0 flex flex-col">
       <header className="px-4 lg:px-6 pt-4 pb-3 flex items-center gap-3"><div className="lg:hidden shrink-0"><${Mark} size="w-11 h-11"/></div><div className="min-w-0 flex-1"><div className="text-xs truncate" style=${{color:'var(--mute)'}}>${greet}</div><h1 className="hd font-extrabold text-xl lg:text-2xl truncate">${cfg.name}</h1></div><span className="hidden sm:block shrink-0 text-xs font-semibold rounded-full px-3 py-1.5" style=${{background:'var(--soft)',color:'var(--brand-d)'}}>${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})}</span></header>
       <main className="flex-1 min-h-0">${Page}</main></div>
-    <nav className="lg:hidden fixed left-0 right-0 bottom-0 z-30 flex items-center justify-between px-3 pt-2" style=${{background:'var(--surface)',borderTop:'1px solid var(--line)',paddingBottom:'calc(8px + env(safe-area-inset-bottom,0px))'}}>${NAV.map(([k,l,d])=>html`<button key=${k} aria-label=${l} onClick=${()=>setPage(k)} className="flex items-center gap-1.5 rounded-2xl px-3 py-2.5 border-0 text-xs font-bold" style=${navBtn(cur===k)}><${Ico} d=${d}/>${cur===k&&l}</button>`)}</nav>
+    <nav className="lg:hidden fixed left-3 right-3 z-30 flex items-center justify-between p-1.5" style=${{bottom:'calc(10px + env(safe-area-inset-bottom,0px))',background:'var(--surface)',borderRadius:'22px',boxShadow:'0 0 0 1px var(--line),0 18px 32px -14px rgba(15,30,25,.38)'}}>${NAV.map(([k,l,d])=>html`<button key=${k} aria-label=${l} onClick=${()=>setPage(k)} className="flex-1 flex flex-col items-center gap-0.5 rounded-2xl py-2 border-0 text-[10.5px] font-semibold" style=${navBtn(cur===k)}><${Ico} d=${d}/>${l}</button>`)}</nav>
     ${order&&html`<${Bayar} order=${order} onDone=${done} onCancel=${()=>setOrder(null)}/>`}
     ${struk&&html`<${Struk} t=${struk} cfg=${cfg} onClose=${()=>setStruk(null)}/>`}
     ${toast&&html`<div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-xl text-sm font-semibold" style=${{background:'var(--good)',color:'#fff'}}>${toast}</div>`}</div>`;
