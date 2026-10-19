@@ -1,0 +1,58 @@
+name: Unzip and Build APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Unzip Project File
+        run: unzip kasir-ta-apk-project.zip -d ./project-files
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: |
+          cd project-files
+          npm install
+
+      - name: Build Web Project
+        run: |
+          cd project-files
+          npm run build
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Add Android & Sync Capacitor
+        run: |
+          cd project-files
+          npx cap add android || true
+          npx cap sync android
+
+      - name: Make Gradle Executable
+        run: chmod +x project-files/android/gradlew
+
+      - name: Build Debug APK
+        run: |
+          cd project-files/android
+          ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Aplikasi-Kasir-Siap-Instal
+          path: project-files/android/app/build/outputs/apk/debug/*.apk
