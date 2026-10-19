@@ -1,4 +1,4 @@
-name: Unzip and Build APK
+name: Robust Unzip and Build APK
 
 on:
   push:
@@ -13,23 +13,39 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Langkah 1: Ekstrak ZIP proyek kasir Anda
       - name: Unzip Project File
-        run: unzip kasir-ta-apk-project.zip -d ./project-files
+        run: |
+          unzip kasir-ta-apk-project.zip -d ./extracted_project
+          echo "=== MEMERIKSA STRUKTUR FOLDER SETELAH UNZIP ==="
+          ls -R ./extracted_project | head -n 30
+
+      # Langkah 2: Cari otomatis lokasi package.json di dalam ZIP
+      - name: Locate Project Root
+        id: locate
+        run: |
+          TARGET_DIR=$(find ./extracted_project -name "package.json" -exec dirname {} \; | head -n 1)
+          if [ -z "$TARGET_DIR" ]; then
+            echo "ERROR: File package.json tidak ditemukan di dalam ZIP!"
+            exit 1
+          fi
+          echo "Proyek utama ditemukan di folder: $TARGET_DIR"
+          echo "project_path=$TARGET_DIR" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install Dependencies
         run: |
-          cd project-files
+          cd ${{ steps.locate.outputs.project_path }}
           npm install
 
       - name: Build Web Project
         run: |
-          cd project-files
-          npm run build
+          cd ${{ steps.locate.outputs.project_path }}
+          npm run build --if-present
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -37,22 +53,30 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Add Android & Sync Capacitor
+      # Langkah 3: Sinkronisasi platform Android bawaan proyek
+      - name: Sync Capacitor Android
         run: |
-          cd project-files
+          cd ${{ steps.locate.outputs.project_path }}
           npx cap add android || true
           npx cap sync android
 
-      - name: Make Gradle Executable
-        run: chmod +x project-files/android/gradlew
-
-      - name: Build Debug APK
+      # Langkah 4: Cari letak folder Android untuk kompilasi Gradle
+      - name: Build Debug APK via Gradle
         run: |
-          cd project-files/android
+          ANDROID_DIR=$(find ./extracted_project -name "build.gradle" -exec dirname {} \; | grep -v "node_modules" | head -n 1)
+          if [ -z "$ANDROID_DIR" ]; then
+            echo "ERROR: Folder Android untuk build gradle tidak ditemukan!"
+            exit 1
+          fi
+          echo "Folder Android ditemukan di: $ANDROID_DIR"
+          cd $ANDROID_DIR
+          chmod +x gradlew
           ./gradlew assembleDebug
 
+      # Langkah 5: Unggah Hasil File APK Akhir
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Aplikasi-Kasir-Siap-Instal
-          path: project-files/android/app/build/outputs/apk/debug/*.apk
+          path: |
+            **/build/outputs/apk/debug/*.apk
