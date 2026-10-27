@@ -1,0 +1,12 @@
+{
+  "name": "rx-print",
+  "version": "1.0.0",
+  "description": "Plugin lokal KASIR TA: cetak struk lewat dialog print Android dan bagikan teks lewat menu share Android.",
+  "private": true,
+  "main": "index.js",
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  }
+}

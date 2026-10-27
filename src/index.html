@@ -9,12 +9,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="capacitor.js"></script>
 <style>
 :root{--bg:#F3F6F4;--surface:#fff;--ink:#0F1E19;--mute:#64736C;--line:#E2E9E5;--brand:#0FA574;--brand-d:#08795A;--onb:#fff;--soft:#E5F6EE;--amber:#FFB43B;--good:#08795A;--danger:#E5484D;--dk:#0F1E19;--ondk:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1512;--surface:#141F1B;--ink:#E9F4EF;--mute:#93A69D;--line:#24342E;--brand:#2FD39B;--brand-d:#6BE5BC;--onb:#06130E;--soft:#1B2D26;--amber:#FFC66B;--good:#4BE0AC;--danger:#FF7A80;--dk:#E9F4EF;--ondk:#0C1512;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0C1512;--surface:#141F1B;--ink:#E9F4EF;--mute:#93A69D;--line:#24342E;--brand:#2FD39B;--brand-d:#6BE5BC;--onb:#06130E;--soft:#1B2D26;--amber:#FFC66B;--good:#4BE0AC;--danger:#FF7A80;--dk:#E9F4EF;--ondk:#0C1512;color-scheme:dark}
 html,body,#root{height:100%}
-body{margin:0;color:var(--ink);font-family:Inter,system-ui,sans-serif;background:radial-gradient(640px 280px at 50% -90px,var(--soft),transparent 72%),var(--bg);background-attachment:fixed;-webkit-tap-highlight-color:transparent}
+html{height:100vh;height:100dvh}
+/* background-attachment:fixed dihapus: di WebView Android ini membuat seluruh layar di-repaint setiap scroll (penyebab utama lag) */
+body{margin:0;color:var(--ink);font-family:Inter,system-ui,sans-serif;background:radial-gradient(640px 280px at 50% -90px,var(--soft),transparent 72%) no-repeat,var(--bg);-webkit-tap-highlight-color:transparent;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* touch-action:manipulation menghilangkan jeda ketuk (double-tap zoom) sehingga tombol langsung merespons */
+button,label,input,select,a{touch-action:manipulation}
+button{-webkit-user-select:none;user-select:none}
 h1,h2,.hd{font-family:Sora,Inter,sans-serif;letter-spacing:-.015em}
 button{font-family:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
@@ -31,11 +37,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .nums{font-variant-numeric:tabular-nums}
 .scroll{overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .scroll::-webkit-scrollbar{display:none}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+@media (max-width:359px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}
+.modal-card{max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.struk-scroll{max-height:calc(100vh - 12rem);max-height:calc(100dvh - 12rem);overflow:auto}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @keyframes shine{to{background-position:-300% 0}}
-@keyframes cr-pulse{50%{width:76px;opacity:.5}}
+@keyframes cr-pulse{50%{transform:scaleX(2.1);opacity:.5}}
 @keyframes cr-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .cr{animation:cr-in .8s ease-out both}
 .cr-sub{font-size:10px;letter-spacing:.2em;color:var(--mute)}
@@ -51,7 +60,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .sp-glow{filter:drop-shadow(0 12px 26px rgba(15,165,116,.38))}
 .sp-blob{position:absolute;border-radius:9999px;filter:blur(64px);animation:sp-float 7s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.sp-title,.sp-blob{animation:none}}
-@media print{body *{visibility:hidden}#struk,#struk *{visibility:visible}#struk{position:absolute;left:0;top:0;width:100%}}
+@media print{html,body,#root{height:auto!important;overflow:visible!important}body *{visibility:hidden}#struk,#struk *{visibility:visible}#struk{position:absolute;left:0;top:0;width:100%;max-height:none!important;overflow:visible!important}}
 </style>
 </head>
 <body>
@@ -62,7 +71,22 @@ const html=htm.bind(React.createElement);
 const rp=n=>(n<0?'-':'')+'Rp'+Math.abs(Math.round(n)).toLocaleString('id-ID');
 const BRAND='RXdigital BY Reksi Hadi Eka Mandara';
 const useLS=(k,d)=>{const [v,setV]=useState(()=>{try{const s=localStorage.getItem(k);return s?JSON.parse(s):d}catch(e){return d}});
-  useEffect(()=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},[k,v]);return [v,setV]};
+  // Simpan dengan jeda 400ms: data produk berisi foto (base64) sehingga menyimpan di setiap ketikan membuat HP lag.
+  const ref=React.useRef(v);ref.current=v;
+  useEffect(()=>{const id=setTimeout(()=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},400);return()=>clearTimeout(id)},[k,v]);
+  useEffect(()=>{const save=()=>{try{localStorage.setItem(k,JSON.stringify(ref.current))}catch(e){}};const vis=()=>{if(document.visibilityState==='hidden')save()};document.addEventListener('visibilitychange',vis);window.addEventListener('pagehide',save);return()=>{document.removeEventListener('visibilitychange',vis);window.removeEventListener('pagehide',save)}},[k]);
+  return [v,setV]};
+// ---- Jembatan ke plugin native (rx-print). window.print() & navigator.share tidak berfungsi di WebView Android. ----
+const isNative=()=>{const C=window.Capacitor;return !!(C&&C.isNativePlatform&&C.isNativePlatform())};
+const CAP=window.capacitorExports;
+const RxPrint=CAP&&CAP.registerPlugin?CAP.registerPlugin('RxPrint'):null;
+const AppPlugin=CAP&&CAP.registerPlugin?CAP.registerPlugin('App'):null;
+const callNative=(method,opts)=>RxPrint?RxPrint[method](opts):window.Capacitor.nativePromise('RxPrint',method,opts);
+// Tombol Back Android: tutup modal / kembali ke halaman sebelumnya, bukan langsung keluar aplikasi.
+const BACK=[];
+const useBack=(on,fn)=>{const r=React.useRef(fn);r.current=fn;useEffect(()=>{if(!on)return;const h=()=>r.current();BACK.push(h);return()=>{const i=BACK.lastIndexOf(h);if(i>=0)BACK.splice(i,1)}},[on])};
+if(isNative()&&AppPlugin){try{Promise.resolve(AppPlugin.addListener('backButton',()=>{const h=BACK[BACK.length-1];if(h)h();else AppPlugin.exitApp()})).catch(()=>{})}catch(e){}}
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const SEED=[['Kopi Susu','☕','Minuman',18000,8000,40],['Es Teh Manis','🧋','Minuman',8000,2500,60],['Jus Jeruk','🍊','Minuman',15000,7000,25],['Air Mineral','💧','Minuman',5000,3000,80],['Nasi Goreng','🍛','Makanan',25000,12000,30],['Mie Ayam','🍜','Makanan',22000,10000,28],['Ayam Geprek','🍗','Makanan',27000,14000,22],['Roti Bakar','🍞','Snack',16000,7000,35],['Kentang Goreng','🍟','Snack',14000,6000,40],['Pisang Coklat','🍌','Snack',12000,5000,30],['Brownies','🍫','Snack',13000,6000,20],['Es Krim','🍨','Snack',10000,5500,45]].map((p,i)=>({id:i+1,name:p[0],icon:p[1],cat:p[2],price:p[3],cost:p[4],stock:p[5]}));
 const DEF={name:'Warung Sinar Kopi',addr:'Jl. Merdeka No. 12, Indonesia',phone:'',tax:10,foot:'Terima kasih, selamat menikmati!',theme:''};
 const NAV=[['kasir','Kasir','M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-2 4h13M9 21a1 1 0 100-2 1 1 0 000 2zm9 0a1 1 0 100-2 1 1 0 000 2z'],['lap','Laporan','M4 19V9m6 10V5m6 14v-7m4 7H2'],['produk','Produk','M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'],['riwayat','Riwayat','M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z'],['set','Setelan','M12 15a3 3 0 100-6 3 3 0 000 6zm7.4-2a7.5 7.5 0 000-2l2-1.5-2-3.5-2.3 1a7.5 7.5 0 00-1.7-1L15 3h-4l-.4 3a7.5 7.5 0 00-1.7 1l-2.3-1-2 3.5 2 1.5a7.5 7.5 0 000 2l-2 1.5 2 3.5 2.3-1a7.5 7.5 0 001.7 1l.4 3h4l.4-3a7.5 7.5 0 001.7-1l2.3 1 2-3.5-2-1.5z']];
@@ -79,6 +103,7 @@ const Credit=({big})=>html`<div className=${'cr text-center '+(big?'py-5':'py-1'
 
 function Kasir({products,cart,setCart,onPay,cfg}){
   const [q,setQ]=useState('');const [cat,setCat]=useState('Semua');const [open,setOpen]=useState(false);const [disc,setDisc]=useState('');
+  useBack(open,()=>setOpen(false));
   const cats=['Semua',...new Set(products.map(p=>p.cat))];
   const list=products.filter(p=>(cat==='Semua'||p.cat===cat)&&p.name.toLowerCase().includes(q.toLowerCase()));
   const add=p=>{const n=cart[p.id]||0;if(n>=p.stock)return;setCart({...cart,[p.id]:n+1})};
@@ -209,13 +234,36 @@ function Struk({t,cfg,onClose}){
   };
   const share=async()=>{
     const text=shareText();
+    if(isNative()){try{await callNative('share',{text,title:'Struk '+t.no});return}catch(e){}}
     try{if(navigator.share){await navigator.share({title:'Struk '+t.no,text});return}}catch(e){if(e&&e.name==='AbortError')return}
     try{await navigator.clipboard.writeText(text);flash('Struk disalin, tinggal tempel')}catch(e){flash('Tidak bisa membagikan')}
   };
+  // HTML struk mandiri untuk dicetak (lebar mengikuti kertas: 58mm, 80mm, atau PDF).
+  const printHtml=()=>{
+    const row=(a,b,bold)=>'<tr'+(bold?' class="b"':'')+'><td>'+esc(a)+'</td><td class="r">'+esc(b)+'</td></tr>';
+    let h='<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+
+      '@page{margin:3mm}*{box-sizing:border-box}body{margin:0 auto;max-width:76mm;font-family:"Courier New",monospace;font-size:12px;color:#000;line-height:1.35}'+
+      '.c{text-align:center}.r{text-align:right;white-space:nowrap}.b{font-weight:bold}.big{font-size:15px}table{width:100%;border-collapse:collapse}td{padding:1px 0;vertical-align:top}'+
+      'hr{border:0;border-top:1px dashed #000;margin:6px 0}img{width:44px;height:44px;object-fit:contain}</style></head><body>';
+    h+='<div class="c">'+(LOGO?'<img src="'+LOGO+'"><br>':'')+'<div class="b big">'+esc(cfg.name)+'</div><div>'+esc(cfg.addr)+'</div>'+(cfg.phone?'<div>Telp/WA: '+esc(cfg.phone)+'</div>':'')+'<div>'+esc(t.no)+' &middot; '+esc(t.time)+'</div></div><hr>';
+    h+='<table>';t.items.forEach(i=>{h+='<tr><td colspan="2">'+esc(i.name)+'</td></tr>'+row('  '+i.qty+' x '+rp(i.price),rp(i.qty*i.price))});h+='</table><hr><table>';
+    h+=row('Subtotal',rp(t.sub));if(t.disc>0)h+=row('Diskon','-'+rp(t.disc));h+=row('PPN',rp(t.tax))+row('TOTAL',rp(t.tot),true)+row(t.method,rp(t.paid))+row('Kembali',rp(t.paid-t.tot));
+    h+='</table><hr><div class="c">'+esc(cfg.foot)+'<br><br><span class="b">KASIR TA</span><br>Sistem Kasir Digital<br>Powered by RXdigital</div></body></html>';
+    return h;
+  };
+  const [busy,setBusy]=useState(false);
+  const print=async()=>{
+    if(busy)return;
+    if(!isNative()){window.print();return}
+    setBusy(true);
+    try{await callNative('print',{html:printHtml(),name:'Struk '+t.no})}
+    catch(e){flash('Gagal mencetak: '+((e&&e.message)||'coba lagi'))}
+    finally{setBusy(false)}
+  };
   const D=html`<div className="my-3 border-t border-dashed" style=${{borderColor:'#9DA5C8'}}></div>`;
   const R=(a,b,c)=>html`<div className=${'flex justify-between '+(c||'')}><span>${a}</span><span>${b}</span></div>`;
-  return html`<div className="fixed inset-0 z-50 grid place-items-center p-4" style=${{background:'rgba(0,0,0,.5)'}} onClick=${onClose}><div className="w-full max-w-sm" onClick=${e=>e.stopPropagation()}>
-    <div id="struk" className="rounded-2xl p-5 text-sm" style=${{background:'#fff',color:'#151B3B',fontFamily:"'Courier New',monospace",maxHeight:'75vh',overflow:'auto'}}>
+  return html`<div className="fixed inset-0 z-50 grid place-items-center p-4" style=${{background:'rgba(0,0,0,.5)'}} onClick=${onClose}><div className="w-full max-w-sm modal-card" onClick=${e=>e.stopPropagation()}>
+    <div id="struk" className="rounded-2xl p-5 text-sm struk-scroll" style=${{background:'#fff',color:'#151B3B',fontFamily:"'Courier New',monospace"}}>
       <div className="text-center">${LOGO&&html`<img src=${LOGO} alt="" className="w-12 h-12 object-contain mx-auto mb-1"/>`}<div className="font-extrabold text-base" style=${{fontFamily:'Sora,sans-serif'}}>${cfg.name}</div><div className="text-xs">${cfg.addr}</div>${cfg.phone&&html`<div className="text-xs">Telp/WA: ${cfg.phone}</div>`}<div className="text-xs mt-1">${t.no} · ${t.time}</div></div>${D}
       ${t.items.map(i=>html`<div key=${i.id} className="mb-1"><div>${i.name}</div>${R(i.qty+' x '+rp(i.price),rp(i.qty*i.price))}</div>`)}${D}
       ${R('Subtotal',rp(t.sub))}${t.disc>0&&R('Diskon','-'+rp(t.disc))}${R('PPN',rp(t.tax))}${R('TOTAL',rp(t.tot),'font-bold text-base')}${R(t.method,rp(t.paid))}${R('Kembali',rp(t.paid-t.tot))}${D}
@@ -227,9 +275,10 @@ function Struk({t,cfg,onClose}){
         <div style=${{width:'28px',height:'1.5px',background:'#151B3B',margin:'8px auto'}}></div>
         <div style=${{fontFamily:'Inter,system-ui,sans-serif',fontSize:'9.5px',letterSpacing:'.08em',color:'#7A827F'}}>Powered by</div>
         <div style=${{fontFamily:'Sora,Inter,sans-serif',fontWeight:700,fontSize:'12px',letterSpacing:'.12em',color:'#151B3B',marginTop:'1px'}}>RXdigital</div></div></div></div>
+    ${msg&&html`<div className="mt-3 text-center text-xs font-semibold rounded-xl py-2 px-3" style=${{background:'var(--surface)',color:'var(--ink)'}}>${msg}</div>`}
     <div className="grid grid-cols-2 gap-2 mt-3">
-      <button className="btn flex items-center justify-center gap-2" onClick=${()=>window.print()}><${Ico} d="M6 9V3h12v6M6 18H4a1 1 0 01-1-1v-6a2 2 0 012-2h14a2 2 0 012 2v6a1 1 0 01-1 1h-2M6 14h12v7H6z" c="w-4 h-4"/>Cetak struk</button>
-      <button className="flex items-center justify-center gap-2 border-0 font-bold" style=${{background:'#fff',color:'var(--brand-d)',borderRadius:'14px',padding:'.85rem 1.1rem',boxShadow:'inset 0 0 0 1.5px var(--brand)'}} onClick=${share}><${Ico} d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" c="w-4 h-4"/>${msg?'Tersalin':'Bagikan'}</button>
+      <button className="btn flex items-center justify-center gap-2 disabled:opacity-60" disabled=${busy} onClick=${print}><${Ico} d="M6 9V3h12v6M6 18H4a1 1 0 01-1-1v-6a2 2 0 012-2h14a2 2 0 012 2v6a1 1 0 01-1 1h-2M6 14h12v7H6z" c="w-4 h-4"/>${busy?'Menyiapkan…':'Cetak struk'}</button>
+      <button className="flex items-center justify-center gap-2 border-0 font-bold" style=${{background:'#fff',color:'var(--brand-d)',borderRadius:'14px',padding:'.85rem 1.1rem',boxShadow:'inset 0 0 0 1.5px var(--brand)'}} onClick=${share}><${Ico} d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" c="w-4 h-4"/>Bagikan</button>
       <button className="col-span-2 border-0 font-semibold text-sm py-3" style=${{background:'#fff',color:'#3B4541',borderRadius:'14px'}} onClick=${onClose}>Tutup</button></div></div></div>`;
 }
 
@@ -237,7 +286,7 @@ function Bayar({order,onDone,onCancel}){
   const [m,setM]=useState('Tunai');const [paid,setPaid]=useState(order.tot);
   const quick=[order.tot,Math.ceil(order.tot/50000)*50000,100000].filter((v,i,a)=>a.indexOf(v)===i&&v>=order.tot);
   const ok=paid>=order.tot;
-  return html`<div className="fixed inset-0 z-50 grid place-items-center p-4" style=${{background:'rgba(0,0,0,.5)'}} onClick=${onCancel}><div className="card w-full max-w-sm p-5" onClick=${e=>e.stopPropagation()}>
+  return html`<div className="fixed inset-0 z-50 grid place-items-center p-4" style=${{background:'rgba(0,0,0,.5)'}} onClick=${onCancel}><div className="card w-full max-w-sm p-5 modal-card" onClick=${e=>e.stopPropagation()}>
     <h2 className="font-extrabold text-lg">Pembayaran</h2><div className="text-3xl font-extrabold nums my-2 hd" style=${{color:'var(--brand)'}}>${rp(order.tot)}</div>
     <div className="flex gap-2 my-3">${['Tunai','QRIS','Debit'].map(x=>html`<button key=${x} className=${'chip flex-1 !py-2 '+(m===x?'on':'')} onClick=${()=>{setM(x);if(x!=='Tunai')setPaid(order.tot)}}>${x}</button>`)}</div>
     ${m==='Tunai'?html`<div><label className="text-xs" style=${{color:'var(--mute)'}}>Uang diterima</label><input type="number" value=${paid} onChange=${e=>setPaid(+e.target.value)} className="inp mt-1 nums font-bold"/>
@@ -251,6 +300,9 @@ function App(){
   const [page,setPage]=useState('kasir');const [products,setProducts]=useLS('rx_products',SEED);const [cart,setCart]=useState({});
   const [tx,setTx]=useLS('rx_tx',[]);const [exp,setExp]=useLS('rx_exp',[]);const [cfg,setCfg]=useLS('rx_cfg',DEF);
   const [order,setOrder]=useState(null);const [struk,setStruk]=useState(null);const [toast,setToast]=useState('');
+  useBack(page!=='kasir',()=>setPage(page==='about'?'set':'kasir'));
+  useBack(!!order,()=>setOrder(null));
+  useBack(!!struk,()=>setStruk(null));
   useEffect(()=>{cfg.theme?document.documentElement.setAttribute('data-theme',cfg.theme):document.documentElement.removeAttribute('data-theme')},[cfg.theme]);
   const done=(method,paid)=>{
     const t={...order,method,paid,no:'TRX-'+String(1001+tx.length),ts:Date.now(),time:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})};

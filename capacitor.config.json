@@ -1,5 +1,9 @@
 {
   "appId": "com.rxdigital.kasirta",
   "appName": "KASIR TA",
-  "webDir": "www"
+  "webDir": "www",
+  "backgroundColor": "#F3F6F4",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "force"
+  }
 }

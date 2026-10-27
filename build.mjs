@@ -7,6 +7,8 @@ fs.mkdirSync('www/fonts', { recursive: true });
 fs.copyFileSync(nm('react/umd/react.production.min.js'), 'www/react.min.js');
 fs.copyFileSync(nm('react-dom/umd/react-dom.production.min.js'), 'www/react-dom.min.js');
 fs.copyFileSync(nm('htm/dist/htm.umd.js'), 'www/htm.js');
+// Capacitor core (registerPlugin) untuk memanggil plugin native: cetak struk, bagikan, tombol Back.
+fs.copyFileSync(nm('@capacitor/core/dist/capacitor.js'), 'www/capacitor.js');
 
 let css = '';
 const fonts = { inter: [400, 500, 600, 700], sora: [500, 600, 700, 800] };
